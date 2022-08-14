@@ -138,3 +138,25 @@ try{
 })
  
 
+app.delete('/brands/:id', async (req, res) => {
+  try{
+    await client.connect()
+  
+      const col = client.db('cars').collection('brands')
+  
+      const query = {
+        _id: ObjectId(req.params.id)
+      }
+  
+  
+      
+      await col.deleteOne(query)
+      res.status(200).json({
+        message: "succeeded"
+      })
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("DELETE error")
+   }
+   
+})
