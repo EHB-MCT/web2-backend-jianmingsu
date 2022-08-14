@@ -21,7 +21,7 @@ app.listen(port, () => {
 })
 
 //mongo config
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
  
 // Replace the following with your Atlas connection string                                                                                                                                        
 const url = "mongodb+srv://admin:admin@cluster0.ozomu.mongodb.net/cars?retryWrites=true&w=majority";
@@ -110,4 +110,31 @@ app.post('/brands', async (req, res) => {
  
 
 });
+
+app.put('/brands/:id', async (req, res) => {
+try{
+  await client.connect()
+
+    const col = client.db('cars').collection('brands')
+
+    const query = {
+      _id: ObjectId(req.params.id)
+    }
+
+    const updatedCars = {
+      $set: 
+      {
+        description: req.body.description
+      }
+    }
+    await col.updateOne(query, updatedCars)
+    res.status(200).json({
+      message: "succeeded"
+    })
+} catch (error) {
+  console.log(error);
+  res.status(500).send("PUT error")
+ }
+})
  
+
