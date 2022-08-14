@@ -11,6 +11,10 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/data/info.html')
 })
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.json())
+
+
 //port
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
@@ -22,20 +26,17 @@ const { MongoClient } = require("mongodb");
 // Replace the following with your Atlas connection string                                                                                                                                        
 const url = "mongodb+srv://admin:admin@cluster0.ozomu.mongodb.net/cars?retryWrites=true&w=majority";
 const client = new MongoClient(url);
- 
- // The database to use
- const dbName = "cars";
                       
  async function run() {
     try {
          await client.connect();
          console.log("Connected correctly to server");
-         const db = client.db(dbName);
+         const db = client.db("cars");
 
          // Use the collection "brands"
          const col = db.collection("brands");
 
-        
+         
          // Find one document
          const myDoc = await col.find({}).toArray();
          // Print to the console
@@ -75,9 +76,38 @@ app.get('/brands', async (req, res) => {
   catch(error) {
     console.log(error);
     res.status(500).send({
-      error: "test",
+      error: "GET error",
       value: error
     })
   }
   
-})
+});
+
+
+app.post('/brands', async (req, res) => {
+ try {
+  await client.connect()
+
+    const col = client.db('cars').collection('brands')
+
+  
+ 
+
+ let newBrand = {
+  "brand": req.body.brand,
+  "description": req.body.description
+ }
+
+ await col.insertOne(newBrand)
+ res.status(200).json(newBrand)
+ return
+}
+
+ catch (error) {
+  console.log(error);
+  res.status(500).send("POST error")
+ }
+ 
+
+});
+ 
