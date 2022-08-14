@@ -1,20 +1,22 @@
 //express
+const { query } = require('express');
 const express = require('express');
 const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.static('public'));
 
+//root route
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/data/info.html')
 })
 
-
+//port
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 })
 
-
+//mongo config
 const { MongoClient } = require("mongodb");
  
 // Replace the following with your Atlas connection string                                                                                                                                        
@@ -33,7 +35,8 @@ const client = new MongoClient(url);
          // Use the collection "brands"
          const col = db.collection("brands");
 
-         
+        
+         // Find one document
          const myDoc = await col.find({}).toArray();
          // Print to the console
          console.log(myDoc);
@@ -48,3 +51,33 @@ const client = new MongoClient(url);
 }
 
 run().catch(console.dir);
+
+
+//GET all car brands
+app.get('/brands', async (req, res) => {
+  try {
+    await client.connect()
+
+    const col = client.db('cars').collection('brands')
+    const brands = await col.find({}).toArray();
+
+    
+
+    if (brands){
+      res.status(200).send(brands);
+      return;
+    } else {
+      res.status(400).send("request not found")
+    }
+  
+    
+  }
+  catch(error) {
+    console.log(error);
+    res.status(500).send({
+      error: "test",
+      value: error
+    })
+  }
+  
+})
