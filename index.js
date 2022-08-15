@@ -83,7 +83,7 @@ app.get('/brands', async (req, res) => {
   
 });
 
-
+//POST in the collection
 app.post('/brands', async (req, res) => {
  try {
   await client.connect()
@@ -111,6 +111,7 @@ app.post('/brands', async (req, res) => {
 
 });
 
+//UPDATE an item in the collection
 app.put('/brands/:id', async (req, res) => {
 try{
   await client.connect()
@@ -138,6 +139,7 @@ try{
 })
  
 
+//DELETE an item in the collection
 app.delete('/brands/:id', async (req, res) => {
   try{
     await client.connect()
